@@ -39,6 +39,7 @@
 // @match          https://leetcode.cn/link/?target=*
 // @match          https://www.kookapp.cn/go-wild.html?url=*
 // @match          https://blog.51cto.com/transfer?*
+// @match          https://tieba.baidu.com/mo/q/checkurl?url=*
 // @version        0.18.1
 // @run-at         document-idle
 // @namespace      https://old-panda.com/
@@ -226,6 +227,7 @@ const $ = jQuery.noConflict(true);
     juejin: { match: 'https://link.juejin.cn/?target=', redirect: "target" },
     doc360_2: { match: 'http://www.360doc.cn/outlink.html?url=', redirect: "url" },
     tieba: { match: 'https://jump2.bdimg.com/safecheck/index?url=', redirect: function () { window.location.replace(document.getElementsByClassName('btn')[0].getAttribute('href')) } },
+    tieba_2: { match: 'https://tieba.baidu.com/mo/q/checkurl?url=', redirect: "url" },
     zaker: { match: 'http://iphone.myzaker.com/zaker/link.php?', redirect: function () { redirect(curURL, "url", true) } },
     tianyancha: { match: 'https://www.tianyancha.com/security?target=', redirect: "target" },
     afdian: { match: 'https://afdian.net/link?target=', redirect: "target" },
