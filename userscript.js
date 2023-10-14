@@ -2,19 +2,19 @@
 // @name           Open the F**king URL Right Now
 // @description    自动跳转某些网站不希望用户直达的外链
 // @author         OldPanda
-// @match          http://redir.yy.duowan.com/warning.php?url=*
-// @match          http://t.cn/*
-// @match          http://www.360doc.com/content/*
 // @match          http*://c.pc.qq.com/*
 // @match          http*://iphone.myzaker.com/zaker/link.php?*
 // @match          http*://link.zhihu.com/?*
+// @match          http*://t.cn/*
 // @match          http*://www.360doc.cn/outlink.html?url=*
+// @match          http://redir.yy.duowan.com/warning.php?url=*
+// @match          http://www.360doc.com/content/*
 // @match          https://afdian.net/link?target=*
 // @match          https://bbs.nga.cn/read.php?*
 // @match          https://blog.51cto.com/transfer?*
 // @match          https://developers.weixin.qq.com/community/middlepage/href?href=*
-// @match          https://docs.qq.com/scenario/link.html?url=*
 // @match          https://docs.qq.com/scenario/link.html?u=*
+// @match          https://docs.qq.com/scenario/link.html?url=*
 // @match          https://game.bilibili.com/linkfilter/?url=*
 // @match          https://gitee.com/link?target=*
 // @match          https://jump2.bdimg.com/safecheck/index?url=*
@@ -28,8 +28,11 @@
 // @match          https://mp.weixin.qq.com/s/*
 // @match          https://nga.178.com/read.php?*
 // @match          https://ref.gamer.com.tw/redir.php/url=*
+// @match          https://shimo.im/outlink/black?url=*
 // @match          https://sspai.com/link?target=*
 // @match          https://steamcommunity.com/linkfilter/?url=*
+// @match          https://t.me/iv?url=*
+// @match          https://tieba.baidu.com/mo/q/checkurl?url=*
 // @match          https://weibo.cn/sinaurl?*
 // @match          https://weixin110.qq.com/cgi-bin/mmspamsupport-bin/newredirectconfirmcgi*
 // @match          https://www.bookmarkearth.com/view/*
@@ -40,6 +43,7 @@
 // @match          https://www.instagram.com/linkshim/?u=*
 // @match          https://www.jianshu.com/go-wild?*
 // @match          https://www.kookapp.cn/go-wild.html?url=*
+// @match          https://www.linkedin.com/safety/go?url=*
 // @match          https://www.mcbbs.net/plugin.php?id=link_redirect&target=*
 // @match          https://www.oschina.net/action/GoToLink?url=*
 // @match          https://www.pixiv.net/jump.php?url=*
@@ -49,10 +53,10 @@
 // @match          https://xie.infoq.cn/link?target=*
 // @match          https://tieba.baidu.com/mo/q/checkurl?url=*
 // @exclude        https://mp.weixin.qq.com/cgi-bin/*
-// @version        1.1.5
+// @version        1.6.3
 // @run-at         document-idle
 // @namespace      https://old-panda.com/
-// @require        https://cdn.staticfile.org/jquery/3.6.3/jquery.min.js
+// @require        https://cdn.staticfile.org/jquery/3.7.0/jquery.min.js
 // @license        GPLv3 License
 // ==/UserScript==
 
@@ -84,6 +88,7 @@ const fuckers = {
   juejin: { match: 'https://link.juejin.cn/?target=', redirect: "target" },
   kook: { match: 'https://www.kookapp.cn/go-wild.html?url=', redirect: "url" },
   leetcode: { match: 'https://leetcode.cn/link/?target', redirect: "target" },
+  linkedin: { match: 'https://www.linkedin.com/safety/go?url=', redirect: "url" },
   logonews: { match: 'https://link.logonews.cn/?', redirect: "url" },
   mcbbs: { match: 'https://www.mcbbs.net/plugin.php?id=link_redirect&target=', redirect: "target" },
   nga: { match: 'https://nga.178.com/read.php?', redirect: function () { $("#m_posts #m_posts_c a").prop("onclick", null).off("click") } },
@@ -91,22 +96,25 @@ const fuckers = {
   oschina: { match: 'https://www.oschina.net/action/GoToLink?url=', redirect: "url" },
   pixiv: { match: 'https://www.pixiv.net/jump.php?url=', redirect: "url" },
   qcc: { match: 'https://www.qcc.com/web/transfer-link?link=', redirect: "link" },
-  qq: { match: 'https://c.pc.qq.com/(middlem|index).html', redirect: "pfurl", enableRegex: true },
+  qq: { match: 'https://c.pc.qq.com/(middleb|middlem|index).html', redirect: "pfurl", enableRegex: true },
+  qqios: { match: 'https://c.pc.qq.com/ios.html', redirect: "url" },
   qqdocs: { match: 'https://docs.qq.com/scenario/link.html?url=', redirect: "url" },
   qqmail: { match: 'https://mail.qq.com/cgi-bin/readtemplate', redirect: "gourl" },
+  shimo: { match: 'https://shimo.im/outlink/black', redirect: "url" },
   sspai: { match: 'https://sspai.com/link?target=', redirect: "target" },
   steam: { match: 'https://steamcommunity.com/linkfilter/?url=', redirect: "url" },
+  telegram: { match: 'https://t.me/iv?url=', redirect: "url" },
   tianyancha: { match: 'https://www.tianyancha.com/security?target=', redirect: "target" },
   tieba: { match: 'https://jump2.bdimg.com/safecheck/index?url=', redirect: function () { window.location.replace(document.getElementsByClassName('btn')[0].getAttribute('href')) } },
   tieba_2: { match: 'https://tieba.baidu.com/mo/q/checkurl?url=', redirect: "url" },
   uisdc: { match: 'https://link.uisdc.com/?redirect=', redirect: "redirect" },
   wechat1: { match: 'https://mp.weixin.qq.com/s/', redirect: enableURLs },
   wechat2: { match: 'https://weixin110.qq.com/cgi-bin/mmspamsupport-bin/newredirectconfirmcgi', redirect: function () { window.location.replace($(".weui-msg__desc").first().text()) } },
-  // http://t.cn/RgAKoPE
+  // https://t.cn/RgAKoPE
   // https://weibo.cn/sinaurl?luicode=10000011&lfid=230259&u=http%3A%2F%2Ft.cn%2FA6qHeVlf
   // https://weibo.cn/sinaurl?toasturl=https%3A%2F%2Ftime.geekbang.org%2F
   // https://weibo.cn/sinaurl?u=https%3A%2F%2Fwww.freebsd.org%2F
-  weibo_1: { match: 'http://t.cn/', redirect: function () { const link = $(".wrap .link").first().text() || document.querySelector('.open-url').children[0].href; window.location.replace(link); } }, // 微博网页版
+  weibo_1: { match: 'https://t.cn/', redirect: function () { const link = $(".wrap .link").first().text() || document.querySelector('.open-url').children[0].href; window.location.replace(link); } }, // 微博网页版
   weibo_2: { match: 'https://weibo.cn/sinaurl?u', redirect: "u" },
   weibo_3: { match: 'https://weibo.cn/sinaurl?toasturl', redirect: "toasturl" },
   weibo_4: { match: 'https://weibo.cn/sinaurl?', redirect: function () { const link = $(".wrap .link").first().text() || document.querySelector('.open-url').children[0].href; window.location.replace(link); } },
@@ -201,6 +209,11 @@ function enableURLs() {
   });
 
   $("#js_content > section").each(function (_, obj) {
+    // Don't do anything on code blocks
+    let className = $(obj).attr('class');
+    if (className != undefined && className.indexOf("code-snippet__js") != -1) {
+      return;
+    }
     let content = $(obj).text();
     let urls = content.matchAll(urlPattern);
     let replaced = new Set();
@@ -244,6 +257,7 @@ function redirect(fakeURLStr, trueURLParam, enableBase64 = false) {
       trueURL = "https://" + trueURL;
     }
   }
+  trueURL = decodeURIComponent(trueURL)
   window.location.replace(trueURL);
 }
 
